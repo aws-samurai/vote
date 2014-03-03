@@ -1,0 +1,111 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JAWS DAYS 2014 九州・沖縄SAMURAIハンズオン：AWS料金体系グランドマスター王者決定戦</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
+  <script src="vertxbus.js"></script>
+  <script src="data.js"></script>
+</head>
+
+<body>
+
+
+
+<div id="status">
+  Connection Status:&nbsp;
+  <span id="status_info">回答サーバに接続できませんでした！リロードして接続しなおして下さい。</span>
+</div>
+
+
+<form>
+  <p>お名前：@<input type="text" id="userName" value="" required/></p>
+  <p><input type="radio" id="area" value="in" checked required/>会場内 | 会場外（リモート参戦）<input type="radio" id="area" value="remote" required/></p>
+  <div id="questions">
+	<select id="qSelect">
+	</select>
+  </div>
+
+  <h1 id="current"></h1>
+
+  <div id="vote">
+	<p>回答：$<input type="text" id="price" value="" required/>/Month</p>
+
+    <input type="hidden" id="qId" />
+	<p><input type="button" value="回答送信！" onClick="send()"/></p>
+  </div>
+</form>
+
+<div id="send">
+  回答履歴:<br>
+
+  <div id="sent" class="innerbox" style="width: 400px; height: 205px;">
+  </div>
+</div>
+
+<script>
+  var eb = null;
+
+  function send() {
+    if (eb) {
+      var json = {q: $('#qId').val(), userName: $('#userName').val(), area: $('#area').val(), price: $('#price').val()};
+      eb.send(ADDR_VOTE, json);
+
+      $('#sent').append($("<code>").text($("#current").text() + " | 回答:" + $('#price').val()));
+      $('#sent').append($("</code><br>"));
+
+      $('#price').val("");
+    }
+  }
+
+  function subscribe(address) {
+    if (eb) {
+      eb.registerHandler(address, function(msg, replyTo) {
+        $('#qTitle').append($('<option>').html(msg.text).val(msg.id));
+      });
+	}
+  }
+
+  function openConn() {
+    if (!eb) {
+      eb = new vertx.EventBus(APP_EB_URL);
+
+      eb.onopen = function() {
+        $("#status_info").text("Connected");
+        subscribe(ADDR_Q);
+      };
+
+      eb.onclose = function() {
+        $("#status_info").text("Not connected");
+        eb = null;
+      };
+    }
+  }
+
+  $(document).ready(function() {
+    openConn();
+
+    for (i=0; i<data.questions.length; i++) {
+      var q = data.questions[i];
+      $('#qSelect').append($('<option>').html(q.txt).val(q.id));
+    }
+
+    $("#qSelect").change(function() {
+      var pk = $("#qSelect option:selected").val()
+      $("#current").text($("#qSelect option:selected").text());
+      $("#qId").val(pk);
+
+      $('#answer').empty();
+      for (var key in data["answer"+ pk]) {
+        $('#answer').append($('<li>').html(data["answer"+ pk][key]));
+      }
+
+
+    });
+    $('#qSelect').trigger('change');
+  });
+
+</script>
+
+</body>
+</html>
