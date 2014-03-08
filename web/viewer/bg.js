@@ -4,6 +4,7 @@ var Background = function() {
 	this.SCREEN_WIDTH = window.innerWidth;
 	this.SCREEN_HEIGHT = window.innerHeight;
 
+	this.MAX_TEXT = 3;
 	this.MAX_STAR = 3;
 
 	this.baseTime = +new Date;
@@ -45,8 +46,8 @@ Background.prototype = {
 
 		this.light = new THREE.DirectionalLight(0xcccccc);
 		this.light.position = new THREE.Vector3(0.577, 0.577, 0.577);
-		var ambient = new THREE.AmbientLight(0x333333);
 		this.scene.add(this.light);
+		var ambient = new THREE.AmbientLight(0x333333);
 		this.scene.add(ambient);
 	},
 
@@ -102,8 +103,11 @@ Background.prototype = {
 			if( Math.abs( dispTextBox[i].position.x ) > 150 ) this.moveX *= -1;
 			dispTextBox[i].position.x += this.moveX + (0.3 * (+new Date - this.baseTime) / 10000);
 			// なんとなく回転もさせておく
-			dispTextBox[i].rotation.x += 0.01;
-			dispTextBox[i].rotation.y += 0.01;
+//			dispTextBox[i].rotation.x += 0.01;
+//			dispTextBox[i].rotation.x += Math.random()/10;
+//			dispTextBox[i].rotation.y += 0.01;
+//			dispTextBox[i].rotation.y += (Math.random() -0.5)/100;
+//			dispTextBox[i].rotation.y += 0.0005;
 
 			// 画面を通り過ぎたら消す
 			if (dispTextBox[i].position.x > 10) {
@@ -128,6 +132,10 @@ Background.prototype = {
 	},
 
 	addText : function(name, text) {
+		if (this.textBox.length > this.MAX_TEXT) {
+			return;
+		}
+
 		this.baseTime = +new Date;
 		var canvas = document.createElement('canvas');
 		canvas.width = 512;
@@ -147,10 +155,10 @@ Background.prototype = {
 		var geometry = new THREE.PlaneGeometry(4, 2);
 		var material = new THREE.MeshPhongMaterial({
 			color: 0xffffff, specular: 0xcccccc, shininess:50, ambient: 0xffffff,
-			map: texture, side: THREE.DoubleSide });
+			transparent: true, map: texture, side: THREE.DoubleSide });
 		var mesh = new THREE.Mesh(geometry, material);
 		mesh.position.x = -5;
-		mesh.position.y = Math.floor(Math.random() * 6) -3;
+		mesh.position.y = Math.random() * 8 - 4;
 		this.scene.add(mesh);
 		this.textBox.push(mesh);
 	},
