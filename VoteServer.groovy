@@ -17,7 +17,7 @@
 def eb = vertx.eventBus
 def jdbcAddress = "voteAddr"
 def insertVote = "insertVote"
-def displayVote = "displayVote"
+def displayVote = "result"
 
 container.with {
   def jdbcConfig = [
@@ -91,10 +91,8 @@ eb.registerHandler("reset") { message ->
 def server = vertx.createHttpServer()
 
 server.requestHandler { req ->
-  if (req.uri == '/') req.response.sendFile('vote.html')
-  if (req.uri == '/view') req.response.sendFile('viewer.html')
-  if (req.uri == '/data.js') req.response.sendFile('data.js')
-  if (req.uri == '/vertxbus.js') req.response.sendFile('vertxbus.js')
+  def file = req.uri == "/" ? "vote.html" : req.uri
+  req.response.sendFile "web/$file"
 }
 
 vertx.createSockJSServer(server).bridge(prefix: '/eventbus', [[:]], [[:]])
