@@ -86,8 +86,6 @@ Background.prototype = {
 	},
 
 	render : function() {
-        requestAnimationFrame( function() { _self.render() });
-
         // カメラの状態を更新
         this.controls.update();
 
@@ -111,7 +109,7 @@ Background.prototype = {
 
 			// 画面を通り過ぎたら消す
 			if (dispTextBox[i].position.x > 10) {
-				this.scene.__removeObject(this.textBox[i]);
+				this.scene.__removeObject(dispTextBox[i]);
 				this.textBox.splice(i, 1);
 			}
 		}
@@ -124,11 +122,12 @@ Background.prototype = {
 
 			// 画面を通り過ぎたら消す
 			if (dispStarBox[i].position.z > 1000) {
-				this.scene.__removeObject(this.starBox[i]);
+				this.scene.__removeObject(dispStarBox[i]);
 				this.starBox.splice(i, 1);
 			}
 		}
 		
+        window.requestAnimationFrame( function() { _self.render() });
 	},
 
 	addText : function(name, text) {
@@ -168,8 +167,9 @@ Background.prototype = {
 			return;
 		}
 
+		this.baseTime = +new Date;
 		var geometry = new THREE.Geometry();
-		var numParticles = 500;
+		var numParticles = 300;
 		for(var i = 0 ; i < numParticles ; i++) {
 			geometry.vertices.push(new THREE.Vector3(
 				Math.random() * 2000 - 1000,

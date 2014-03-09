@@ -2,25 +2,75 @@
 <head>
   <meta charset="UTF-8">
   <title>JAWS DAYS 2014 九州・沖縄SAMURAIハンズオン：AWS料金体系グランドマスター王者決定戦</title>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/jumbotron-narrow.css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
   <script src="vertxbus.js"></script>
   <script src="data.js"></script>
+
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body>
 
+  <div class="container">
+    <div class="header">
+      <ul class="nav nav-pills pull-right">
+        <li><a href="/viewer/index.html" target="_blank">Viewer</a></li>
+      </ul>
+	  <h3>JAWS DAYS 2014 九州・沖縄SAMURAIハンズオン<br>
+		AWS料金体系グランドマスター王者決定戦</h3>
+      <p class="text-muted" id="status">
+		Connection Status:&nbsp;
+		<span id="status_info">回答サーバに接続できませんでした！ リロードして接続しなおして下さい。</span>
 
+		<button type="button" class="btn btn-warning" onClick="star();">
+		  <span class="glyphicon glyphicon-thumbs-up"></span> わっしょい!
+		</button>
+	  </p>
 
-<div id="status">
-  Connection Status:&nbsp;
-  <span id="status_info">回答サーバに接続できませんでした！リロードして接続しなおして下さい。</span>
-</div>
+    </div>
+
 
 
 <form>
-  <p>お名前：@<input type="text" id="userName" value="" required/></p>
-  <p><input type="radio" id="area" value="in" checked required/>会場内 | 会場外（リモート参戦）<input type="radio" id="area" value="remote" required/></p>
+
+  <div class="input-group input-group-lg">
+	<span class="input-group-addon">@</span>
+	<input type="text" class="form-control" id="userName" placeholder="お名前">
+  </div>
+
+  <div class="row">
+	<div class="col-lg-6">
+      <div class="input-group">
+		<span class="input-group-addon">
+          <input type="radio" name="area" id="area" value="in" checked required/>
+		</span>
+		<p class="form-control">会場内</p>
+      </div><!-- /input-group -->
+	</div><!-- /.col-lg-6 -->
+
+	<div class="col-lg-6">
+      <div class="input-group">
+		<span class="input-group-addon">
+          <input type="radio" name="area" id="area" value="remote" required/>
+		</span>
+		<p class="form-control">会場外（リモートからの参戦）</p>
+      </div><!-- /input-group -->
+	</div><!-- /.col-lg-6 -->
+  </div><!-- /.row -->
+
+  <hr />
+
   <div id="questions">
 	<select id="qSelect">
 	</select>
@@ -32,7 +82,7 @@
 	<p>回答：$<input type="text" id="price" value="" required/>/Month</p>
 
     <input type="hidden" id="qId" />
-	<p><input type="button" value="回答送信！" onClick="send()"/></p>
+	<p><input type="button" value="回答送信！" onClick="send()" class="btn btn-lg btn-success" /></p>
   </div>
 </form>
 
@@ -55,6 +105,12 @@
       $('#sent').append($("</code><br>"));
 
       $('#price').val("");
+    }
+  }
+
+  function star() {
+    if (eb) {
+      eb.send(ADDR_STAR, '');
     }
   }
 

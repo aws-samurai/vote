@@ -17,7 +17,7 @@
 def eb = vertx.eventBus
 def jdbcAddress = "voteAddr"
 def insertVote = "insertVote"
-def displayVote = "result"
+def displayVote = "viewStar"
 
 container.with {
   def jdbcConfig = [
@@ -53,6 +53,9 @@ eb.registerHandler(insertVote) { message ->
 	message.body["price"]
   ]]
   eb.send(jdbcAddress, insert) { reply ->
+	if (reply.body.status != 'ok') { 
+	  println 'jdbc error:' + reply.body
+	}
 	message.reply reply.body()
   }
 }
@@ -62,30 +65,31 @@ eb.registerHandler(insertVote) { message ->
 
 /** WebSocket vote */
 eb.registerHandler("vote") { message -> 
-  eb.send(insertVote, [
+  def insert = [
 		  questionId: message.body.q,
 		  userName: message.body.userName,
 		  area: message.body.area,
 		  price: message.body.price
-  ])
+  ]
+  eb.send(insertVote, insert) { reply ->
+	println 'insert:' + reply.body
+  }
 
   def json = new groovy.json.JsonBuilder()
   json {
 	userName "@${message.body.userName}"
 	price "${message.body.price}"
   }
-  eb.send(displayVote, json.toString())
+  eb.send('viewVote', json.toString()) { reply ->
+	println 'to Viewer :' reply.body
+	message.reply reply.body
+  }
 }
-
-/*
-eb.registerHandler("reset") { message -> 
-  def resultKey = 'result' + message.body.q
-  def map = vertx.sharedData.getMap(resultKey)
-  map.clear()
-  eb.send(resultKey, ["reset":"empty"])
-  println "reset "+ resultKey
+eb.registerHandler("star") { message -> 
+  eb.send('viewStar', '') { reply ->
+	println 'viewStar:' + reply.body
+  }
 }
-*/
 
 
 def server = vertx.createHttpServer()
