@@ -178,7 +178,7 @@ Background.prototype = {
 		}
 		
 		// マテリアルを作成
-		var texture = THREE.ImageUtils.loadTexture('images/jaws-ug-okinawa-icon.png');
+		var texture = THREE.ImageUtils.loadTexture('assets/images/jaws-ug-okinawa-icon.png');
 
 		// var canvas = tm.graphics.Canvas();
 		// canvas.resize(256, 256);
