@@ -5,11 +5,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-  <link rel="stylesheet" href="css/jumbotron-narrow.css">
+  <link rel="stylesheet" href="./assets/css/jumbotron-narrow.css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
-  <script src="vertxbus.js"></script>
-  <script src="data.js"></script>
+  <script src="./assets/js/vertxbus.js"></script>
+  <script src="./assets/js/data.js"></script>
+  <script src="./assets/js/app.js"></script>
 
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -29,18 +30,17 @@
       </ul>
 	  <h3>JAWS DAYS 2014 九州・沖縄SAMURAIハンズオン<br>
 		AWS料金体系グランドマスター王者決定戦</h3>
+
       <p class="text-muted" id="status">
 		Connection Status:&nbsp;
 		<span id="status_info">回答サーバに接続できませんでした！ リロードして接続しなおして下さい。</span>
 
-		<button type="button" class="btn btn-warning" onClick="star();">
+		<button type="button" class="btn btn-warning" id="starBtn" onClick="star();">
 		  <span class="glyphicon glyphicon-thumbs-up"></span> わっしょい!
 		</button>
 	  </p>
 
     </div>
-
-
 
 <form>
 
@@ -53,18 +53,21 @@
 	<div class="col-lg-6">
       <div class="input-group">
 		<span class="input-group-addon">
-          <input type="radio" name="area" id="area" value="in" checked required/>
+		  <input type="radio" name="area" id="r1" value="in" checked required/>
 		</span>
-		<p class="form-control">会場内</p>
+		<p class="form-control">
+		  <label for="r1">会場内</label>
+		</p>		
       </div><!-- /input-group -->
 	</div><!-- /.col-lg-6 -->
 
 	<div class="col-lg-6">
       <div class="input-group">
 		<span class="input-group-addon">
-          <input type="radio" name="area" id="area" value="remote" required/>
+          <input type="radio" name="area" id="r2" value="remote" required/>
 		</span>
-		<p class="form-control">会場外（リモートからの参戦）</p>
+		<p class="form-control">
+		  		  <label for="r2">会場外（リモートからの参戦）</label></p>
       </div><!-- /input-group -->
 	</div><!-- /.col-lg-6 -->
   </div><!-- /.row -->
@@ -82,7 +85,7 @@
 	<p>回答：$<input type="text" id="price" value="" required/>/Month</p>
 
     <input type="hidden" id="qId" />
-	<p><input type="button" value="回答送信！" onClick="send()" class="btn btn-lg btn-success" /></p>
+	<p><input type="button" value="回答送信！" onClick="send()" class="btn btn-lg btn-success" id="sendBtn"/></p>
   </div>
 </form>
 
@@ -93,75 +96,6 @@
   </div>
 </div>
 
-<script>
-  var eb = null;
-
-  function send() {
-    if (eb) {
-      var json = {q: $('#qId').val(), userName: $('#userName').val(), area: $('#area').val(), price: $('#price').val()};
-      eb.send(ADDR_VOTE, json);
-
-      $('#sent').append($("<code>").text($("#current").text() + " | 回答:" + $('#price').val()));
-      $('#sent').append($("</code><br>"));
-
-      $('#price').val("");
-    }
-  }
-
-  function star() {
-    if (eb) {
-      eb.send(ADDR_STAR, '');
-    }
-  }
-
-  function subscribe(address) {
-    if (eb) {
-      eb.registerHandler(address, function(msg, replyTo) {
-        $('#qTitle').append($('<option>').html(msg.text).val(msg.id));
-      });
-	}
-  }
-
-  function openConn() {
-    if (!eb) {
-      eb = new vertx.EventBus(APP_EB_URL);
-
-      eb.onopen = function() {
-        $("#status_info").text("Connected");
-        subscribe(ADDR_Q);
-      };
-
-      eb.onclose = function() {
-        $("#status_info").text("Not connected");
-        eb = null;
-      };
-    }
-  }
-
-  $(document).ready(function() {
-    openConn();
-
-    for (i=0; i<data.questions.length; i++) {
-      var q = data.questions[i];
-      $('#qSelect').append($('<option>').html(q.txt).val(q.id));
-    }
-
-    $("#qSelect").change(function() {
-      var pk = $("#qSelect option:selected").val()
-      $("#current").text($("#qSelect option:selected").text());
-      $("#qId").val(pk);
-
-      $('#answer').empty();
-      for (var key in data["answer"+ pk]) {
-        $('#answer').append($('<li>').html(data["answer"+ pk][key]));
-      }
-
-
-    });
-    $('#qSelect').trigger('change');
-  });
-
-</script>
 
 </body>
 </html>
