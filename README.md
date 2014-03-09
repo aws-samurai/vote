@@ -30,17 +30,14 @@ http://jawsdays2014.jaws-ug.jp/
 
 ## 既知の問題
 
-* オブジェクトを多数描画するとレンダリングがストップする
+* オブジェクトを多数描画するとレンダリングがストップする（ので賑やかしと投稿がそれぞれ3/4個ずつしか描画できません。。。）
 
     Uncaught TypeError: Cannot call method 'dispatchEvent' of undefined three.min.js:317
 221
 	Uncaught TypeError: Cannot read property 'immediateRenderCallback' of undefined
 
 
+* スマートフォンからは投票はできますが、回答結果は見れません（たぶん。。。）。
 
-* スマートフォンからは投票はできますが、回答結果は見れません。
-
-
-## 画面をCSSで綺麗にしたり、データ永続化/後日ダウンロード機能などのプルリクお待ちしております(^^)
 
 contact to [@k_nishijima](https://twitter.com/k_nishijima)
